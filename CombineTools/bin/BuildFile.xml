@@ -36,3 +36,4 @@
 <use name="boost_regex"/>
 <use name="rootpy"/>
 <use name="CombineHarvester/CombineTools"/>
+<flags CXXFLAGS="-DBOOST_BIND_GLOBAL_PLACEHOLDERS -Wno-free-nonheap-object"/>

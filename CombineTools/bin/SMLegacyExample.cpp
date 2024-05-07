@@ -48,6 +48,9 @@ int main() {
   bkg_procs["tt"] = {"ZTT", "W", "QCD", "ZL", "ZJ", "TT", "VV"};
 
   VString sig_procs = {"ggH", "qqH", "WH", "ZH"};
+  VString sig_procs_reduced = {"ggH", "qqH"};
+
+  VString energies = {"7TeV", "8TeV"};
 
   map<string, Categories> cats;
   cats["et_7TeV"] = {
@@ -139,8 +142,9 @@ int main() {
   map<string, TGraph> xs;
   // Get the table of H->tau tau BRs vs mass
   xs["htt"] = ch::TGraphFromTable(input_dir+"/xsecs_brs/htt_YR3.txt", "mH", "br");
-  for (string const& e : {"7TeV", "8TeV"}) {
-    for (string const& p : sig_procs) {
+  for (const string& e : energies) {
+    for (const string& p : sig_procs) {
+
       // Get the table of xsecs vs mass for process "p" and era "e":
       xs[p+"_"+e] = ch::TGraphFromTable(input_dir+"/xsecs_brs/"+p+"_"+e+"_YR3.txt", "mH", "xsec");
       cout << ">>>> Scaling for process " << p << " and era " << e << "\n";
@@ -152,8 +156,8 @@ int main() {
   }
   //! [part1]
   xs["hww_over_htt"] = ch::TGraphFromTable(input_dir+"/xsecs_brs/hww_over_htt.txt", "mH", "ratio");
-  for (string const& e : {"7TeV", "8TeV"}) {
-    for (string const& p : {"ggH", "qqH"}) {
+  for (const string& e : energies) {
+    for (const string& p : sig_procs_reduced) {
      cb.cp().channel({"em"}).process({p+"_hww125"}).era({e})
        .ForEachProc([&](ch::Process *proc) {
          proc->set_rate(proc->rate() * xs[p+"_"+e].Eval(125.) * xs["htt"].Eval(125.));
